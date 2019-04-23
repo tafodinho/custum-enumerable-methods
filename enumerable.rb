@@ -1,125 +1,199 @@
-def my_each array
-    i = 0
-    while i < array.length do
-        yield(array[i])
-        i += 1
-    end
-    
-end
+module Enumerable
 
-def my_each_with_index array 
-    i = 0
-    while i < array.length do
-        yield(i, array[i])
-        i += 1
-    end
-end
-
-def my_select array 
-    i = 0
-    new_array = []
-    while i < array.length do
-        if yield(array[i])
-            new_array << array[i]
+    def my_each
+        i = 0
+        if self.class == Array
+            while i < self.length do
+                yield(self[i])
+                i += 1
+            end
+        elsif self.class == Hash
+            while i < self.length do
+                yield(self.keys[i], self.values[i])
+                i += 1
+            end
         end
-        i += 1
     end
-    new_array
-end
 
-def my_all? array
-    i = 0
-    result = true
-    while i < array.length do
-        unless yield(array[i])
-            result = false
+    def my_each_with_index
+        i = 0
+        if self.class == Array
+            while i < self.length do
+                yield(i, self[i])
+                i += 1
+            end
+        elsif self.class == Hash 
+            while i < self.length do 
+                yield(self.keys[i], self.values[i], i)
+                i += 1
+            end
         end
-        i += 1
     end
-    return result
-end
 
-def my_any? array
-    i = 0
-    result = false
-    while i < array.length do
-        if yield(array[i])
-            result = true
+    def my_select
+        i = 0
+        if self.class == Array
+            new_array = []
+            self.my_each do |value|
+                if yield(value)
+                    new_array << value
+                end
+            end
+            return new_array
+        elsif self.class == Hash 
+            new_hash = {}
+            self.my_each do |key, value|
+                if yield(key, value)
+                    new_hash[key] = value
+                end
+            end
+            return new_hash
         end
-        i += 1
     end
-    return result
-end
 
-def my_none? array
-    i = 0
-    result = true
-    while i < array.length do
-        if yield(array[i])
-            result = false
+    def my_all?
+        i = 0
+        result = true
+        if self.class == Array 
+            self.my_each do |value|
+                unless yield(value)
+                    result = false
+                end
+            end
+        elsif self.class == Hash
+            self.my_each do |key, value|
+                unless yield(key, value)
+                    result = false
+                end
+            end
         end
-        i += 1
+        return result
     end
-    result
-end
 
-def my_count array
-    i = 0 
-    count = 0
-    while i < array.length do 
-        if yield() == array[i]
-            count +=1
+    def my_any?
+        i = 0
+        result = false
+        if self.class == Array
+            self.my_each do |value|
+                if yield(value)
+                    result = true
+                end
+                i += 1
+            end
+        elsif self.class == Hash
+            self.my_each do |key, value|
+                if yield(key, value)
+                    result = true
+                end
+            end
         end
-        i += 1
+        return result
     end
-    count
+
+    def my_none? 
+        i = 0
+        result = true
+        if self.class == Array
+            self.my_each do |value|
+                if yield(value)
+                    result = false
+                end
+            end
+        elsif self.class == Hash 
+            self.my_each do |value|
+                if yield(value) 
+                    result = false
+                end
+            end
+        end
+        result
+    end
+
+    def my_count var
+        count = 0
+        if self.class == Array
+            self.my_each do |value|
+                if value == var
+                    count +=1
+                end
+            end
+        elsif self.class == Hash 
+            self.my_each do |value|
+                if value == var
+                    count +=1
+                end
+            end
+        end
+        count
+    end
+
+    def my_map
+        if self.class == Array
+            new_array = []
+            self.my_each do |value|
+                new_array << yield(value)
+            end
+            return new_array
+        elsif self.class == Hash
+            new_hash = {}
+            self.my_each do |key, value|
+                new_array[key] = yield(value)
+            end
+            return new_hash
+        end
+    end
+
+    def my_inject i = 0
+        result = self[i]
+        i += 1
+        if self.class == Array
+            while i < self.length do 
+                result = yield(result, self[i])
+                i += 1
+            end
+        elsif self.class == Hash 
+            while i < self.length do
+                result = yield(total, self.keys[i], self.values[i])
+                i += 1
+            end
+        end
+        result
+    end
 end
 
-def my_map array 
-    i = 0
-    new_array = []
-    while i < array.length do
-        new_array << yield(array[i])
-        i += 1
-    end
-    new_array
-end
 
-def my_inject array, i = 0
-    result = array[i]
-    i += 1
-    while i < array.length do 
-        result = yield(result, array[i])
-        i += 1
-    end
-    result
-end
+
+
+
+
 
 
 array = [1, 2, 3, 4, 5, 2]
-# print my_each(array) {|element| puts element}
-# print my_each_with_index(array) {|index, element| 
-#     print index
-#     print " =>"
-#     print element
-#     print " "
+hash = { 1 => 10, 2 => 15, 3 => 12, 4 => 5}
+# print array.my_each {|element| puts element}
+print hash.my_each {|key, value| puts value}
+# print array.my_each_with_index {|key, value| 
+#     print key
+#     print " => "
+#     print value
+#     print "\n"
 
 # }
 
-# print my_select(array) {|value|value > 2 }
+# print array.my_select {|value|value > 2 }
 
-# print my_all?(array) { |value| value > 2}
+# print array.my_all? { |value| value > 12}
 
-# print my_any?(array) { |value| value > -1}
+# print array.my_any? { |value| value > 12}
 
-# print my_none?(array) { |value| value > 4}
+# print array.my_none? { |value| value > 11}
 
-# print my_count(array) { 3 }
+# print array.my_count(1)
 
-# print my_map(array) { |value| value + 2}
+# print array.my_map { |value| value + 2}
 
-def multiply_els(arr)
-    my_map(arr) {|total, value| total * value}
-end
+# def multiply_els(arr)
+#     arr.my_inject {|total, value| total * value}
+# end
 
-print multiply_els([2,4,5])
+# print multiply_els([2,4,5])
