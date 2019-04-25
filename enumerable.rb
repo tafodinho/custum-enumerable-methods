@@ -192,8 +192,8 @@ print hash.my_each {|key, value| puts value}
 
 # print array.my_map { |value| value + 2}
 
-# def multiply_els(arr)
-#     arr.my_inject {|total, value| total * value}
-# end
+def multiply_els(arr)
+    arr.my_inject {|total, value| total * value}
+end
 
-# print multiply_els([2,4,5])
+print multiply_els([2,4,5])
