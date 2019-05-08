@@ -37,6 +37,17 @@ RSpec.describe Enumerable do
         end
     end
 
-    
+    describe "#my_count" do 
+        it "takes a number in a array as agument and returns the number of times the number occures in that array" do 
+            expect([1,2,3,1].my_count(1)).to eql(2)
+        end
+    end
+
+    describe "#my_map" do 
+        it "takes a block that modifies the elements of the array as argument and returns a new array with the modified values" do
+            expect([1,2,3].my_map {|value| value*2}).to eql([2,4,6])
+        end
+    end
+
 
 end
