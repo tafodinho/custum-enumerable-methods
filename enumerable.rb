@@ -111,18 +111,22 @@ module Enumerable
         result
     end
 
-    def my_count var
+    def my_count
         count = 0
         if self.class == Array
             self.my_each do |value|
-                if value == var
-                    count +=1
+                if block_given?
+                    count += 1 if yield(value)
+                else
+                    count += 1
                 end
             end
         elsif self.class == Hash 
             self.my_each do |value|
-                if value == var
-                    count +=1
+                if block_given?
+                    count += 1 if yield(value)
+                else
+                    count += 1
                 end
             end
         end
@@ -172,7 +176,7 @@ end
 
 array = [1, 2, 3, 4, 5, 2]
 hash = { 1 => 10, 2 => 15, 3 => 12, 4 => 5}
-print array.my_each {|element| element}
+# print array.my_each {|element| element}
 # print hash.my_each {|key, value| value}
 # print array.my_each_with_index {|key, value| 
 #     print key
@@ -190,7 +194,7 @@ print array.my_each {|element| element}
 
 # print array.my_none? { |value| value > 11}
 
-# print array.my_count(1)
+print array.my_count {|value| value % 2 == 0}
 
 # print array.my_map { |value| value + 2}
 
