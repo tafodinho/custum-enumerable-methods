@@ -1,5 +1,4 @@
 module Enumerable
-
     def my_each
         i = 0
         if self.class == Array
@@ -13,6 +12,7 @@ module Enumerable
                 i += 1
             end
         end
+        self
     end
 
     def my_each_with_index
@@ -28,6 +28,7 @@ module Enumerable
                 i += 1
             end
         end
+        self
     end
 
     def my_select
@@ -49,6 +50,7 @@ module Enumerable
             end
             return new_hash
         end
+        self
     end
 
     def my_all?
@@ -67,7 +69,7 @@ module Enumerable
                 end
             end
         end
-        return result
+        result
     end
 
     def my_any?
@@ -87,7 +89,7 @@ module Enumerable
                 end
             end
         end
-        return result
+        result
     end
 
     def my_none? 
@@ -109,18 +111,22 @@ module Enumerable
         result
     end
 
-    def my_count var
+    def my_count
         count = 0
         if self.class == Array
             self.my_each do |value|
-                if value == var
-                    count +=1
+                if block_given?
+                    count += 1 if yield(value)
+                else
+                    count += 1
                 end
             end
         elsif self.class == Hash 
             self.my_each do |value|
-                if value == var
-                    count +=1
+                if block_given?
+                    count += 1 if yield(value)
+                else
+                    count += 1
                 end
             end
         end
@@ -139,7 +145,7 @@ module Enumerable
             self.my_each do |key, value|
                 new_array[key] = yield(value)
             end
-            return new_hash
+            new_hash
         end
     end
 
@@ -170,8 +176,8 @@ end
 
 array = [1, 2, 3, 4, 5, 2]
 hash = { 1 => 10, 2 => 15, 3 => 12, 4 => 5}
-# print array.my_each {|element| puts element}
-print hash.my_each {|key, value| puts value}
+# print array.my_each {|element| element}
+# print hash.my_each {|key, value| value}
 # print array.my_each_with_index {|key, value| 
 #     print key
 #     print " => "
@@ -188,12 +194,12 @@ print hash.my_each {|key, value| puts value}
 
 # print array.my_none? { |value| value > 11}
 
-# print array.my_count(1)
+print array.my_count {|value| value % 2 == 0}
 
 # print array.my_map { |value| value + 2}
 
-def multiply_els(arr)
-    arr.my_inject {|total, value| total * value}
-end
+# def multiply_els(arr)
+#     arr.my_inject {|total, value| total * value}
+# end
 
-print multiply_els([2,4,5])
+# print multiply_els([2,4,5])
