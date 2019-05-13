@@ -40,6 +40,7 @@ RSpec.describe Enumerable do
     describe "#my_count" do 
         it "takes a number in a array as agument and returns the number of times the number occures in that array" do 
             expect([1,2,3,1].my_count {|value| value % 2 == 0}).to eql(1)
+            expect([1,2,3,1].my_count).to eql(4)
         end
     end
 
